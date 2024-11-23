@@ -79,7 +79,7 @@
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <Optimize>False</Optimize>

@@ -11,7 +11,7 @@
 	<Identity
 	  Name="b16e7b8a-d4ca-40fd-9719-2884843a29a7"
 	  Publisher="CN=QaQ"
-	  Version="1.0.1.0" />
+	  Version="1.0.2.0" />
 
 	<mp:PhoneIdentity PhoneProductId="b16e7b8a-d4ca-40fd-9719-2884843a29a7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
