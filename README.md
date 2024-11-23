@@ -3,7 +3,7 @@
 <img src="https://github.com/MoeclubM/AHU-DWNET-Client/blob/main/Assets/logo.png?raw=true" width="200" alt="ahu"/>
 </p>
 <h2 align="center">AHU DWNET Client</h2>
-<h3 align="center">安徽大学(AHU)校园网登录应用</h3>
+<h3 align="center">安徽大学(AHU)校园网(drcom认证)登录应用</h3>
 <h3 align="center">使用WinUI3构建</h3>
 <p align="center">
 <img src="https://img.shields.io/github/v/release/MoeclubM/AHU-DWNET-Client" alt="">
@@ -28,6 +28,5 @@
 ## 原理
 模拟发送网页登录请求进行登录登出功能
 
-## TODO（暂时不准备做了）
-- 全局拖动
+## TODO
 - 验证校区AC名是否正确（目前仅龙河保证可用）
