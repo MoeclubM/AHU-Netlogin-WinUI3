@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DrcomLoginApp (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DrcomLoginApp (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
