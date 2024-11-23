@@ -1,7 +1,7 @@
 # AHU-DWNET-Client
 ![alt text](/Assets/logo.png)
 
- 使用winui3构建的安徽大学校园网登录应用
+安徽大学(AHU)校园网登录应用 使用winui3
 ##  功能
 - 登录
 - 登出
