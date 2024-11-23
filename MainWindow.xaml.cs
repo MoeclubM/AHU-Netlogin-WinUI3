@@ -1,12 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Text.Json;
 using Windows.Graphics;
 using Windows.Storage;
 using Microsoft.UI.Windowing;
@@ -15,7 +12,7 @@ namespace DrcomLoginApp
 {
     public sealed partial class MainWindow : Window
     {
-        private readonly string loginUrlTemplate = "http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1&user_account={0}&user_password={1}&wlan_user_ip={2}&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=172.16.253.1&wlan_ac_name=&jsVersion=3.3.2&v=4946";
+        private readonly string loginUrlTemplate = "http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1&user_account={0}&user_password={1}&wlan_user_ip={2}&wlan_user_ipv6=&wlan_user_mac={3}&wlan_ac_ip=172.16.253.1&wlan_ac_name={4}&jsVersion=3.3.2&v=4946";
         private readonly string logoutUrlTemplate = "http://172.16.253.3:801/eportal/?c=Portal&a=logout&callback=dr1004&login_method=1&user_account=drcom&user_password=123&ac_logout=0&register_mode=1&wlan_user_ip={0}&wlan_user_ipv6=&wlan_vlan_id=0&wlan_user_mac=000000000000&wlan_ac_ip=172.16.253.1&wlan_ac_name=&jsVersion=3.3.2&v=3484";
 
         public MainWindow()
@@ -27,12 +24,14 @@ namespace DrcomLoginApp
             }
             // 获取 AppWindow 对象
             var appWindow = GetAppWindowForCurrentWindow();
+            //隐藏icon
+            appWindow.SetIcon(null);
             // 设置窗口的宽度和高度
-            appWindow.Resize(new SizeInt32(300, 400));
-            string ipAddress = GetLocalIPAddress();
-            IpAddressTextBlock.Text = $"当前 IP 地址: {ipAddress}";
-            //显示网卡地址
-            
+            appWindow.Resize(new SizeInt32(350, 520));
+            //显示网卡地址类型
+            IpAddressTextBlock.Text = $"IP 地址: {GetNetworkDetails().IpAddress}";
+            InterfaceTypeTextBlock.Text = $"网卡类型: {GetNetworkDetails().InterfaceType}";
+
         }
         private AppWindow GetAppWindowForCurrentWindow()
         {
@@ -48,15 +47,31 @@ namespace DrcomLoginApp
         {
             string account = AccountTextBox.Text.Trim();
             string password = PasswordBox.Password.Trim();
-            string ip = GetLocalIPAddress();
-
+            string ip = GetNetworkDetails().IpAddress;
+            string mac = GetNetworkDetails().MacAddress;
+            string InterfaceType = GetNetworkDetails().InterfaceType;
+            string url = "";
             if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(password))
             {
                 StatusTextBlock.Text = "请输入账号和密码！";
                 return;
             }
-
-            string url = string.Format(loginUrlTemplate, Uri.EscapeDataString(account), Uri.EscapeDataString(password), ip);
+            if (InterfaceType != "none")
+            {
+                if (InterfaceType == "Ethernet")
+                {
+                    url = string.Format(loginUrlTemplate, Uri.EscapeDataString(account), Uri.EscapeDataString(password), ip, mac, "");
+                }
+                if (InterfaceType == "Wireless")
+                {
+                    url = string.Format(loginUrlTemplate, Uri.EscapeDataString(account), Uri.EscapeDataString(password), ip, mac, "AHULHAC");
+                }
+            }
+            else
+            {
+                StatusTextBlock.Text = "未正确识别您的网络设备，请尝试重新启动本应用";
+                return;
+            }
 
             try
             {
@@ -73,7 +88,7 @@ namespace DrcomLoginApp
                 }
                 else if (response.Contains("\"ret_code\":2"))
                 {
-                    StatusTextBlock.Text = "已在线！";
+                    StatusTextBlock.Text = "当前设备已在线！无需重复登录";
                 }
                 else
                 {
@@ -89,7 +104,8 @@ namespace DrcomLoginApp
         }
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            string ip = GetLocalIPAddress();
+            string ip = GetNetworkDetails().IpAddress;
+            string mac = GetNetworkDetails().MacAddress;
             string url = string.Format(logoutUrlTemplate, ip);
 
             try
@@ -127,17 +143,14 @@ namespace DrcomLoginApp
                 StatusTextBlock.Text = $"请求失败！错误信息: {ex.Message}";
             }
         }
-
-
-
-        private string GetLocalIPAddress()
+        private (string IpAddress, string MacAddress, string InterfaceType) GetNetworkDetails()
         {
             var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces()
                 .Where(n => n.OperationalStatus == OperationalStatus.Up
-                            && n.NetworkInterfaceType == NetworkInterfaceType.Ethernet  // 只选择以太网网卡
-                            && !n.Description.ToLower().Contains("virtual")  // 排除虚拟网卡
-                            && !n.Description.ToLower().Contains("vmware")  // 排除 VMware 网卡
-                            && !n.Description.ToLower().Contains("hyper-v"));  // 排除 Hyper-V 网卡
+                            && (n.NetworkInterfaceType == NetworkInterfaceType.Ethernet || n.NetworkInterfaceType == NetworkInterfaceType.Wireless80211) // 包括以太网和无线网卡
+                            && !n.Description.ToLower().Contains("virtual") // 排除虚拟网卡
+                            && !n.Description.ToLower().Contains("vmware") // 排除 VMware 网卡
+                            && !n.Description.ToLower().Contains("hyper-v")); // 排除 Hyper-V 网卡
 
             foreach (var netInterface in networkInterfaces)
             {
@@ -147,16 +160,26 @@ namespace DrcomLoginApp
 
                 if (ipv4Address != null)
                 {
-                    return ipv4Address.Address.ToString();
+                    // 获取实际的 MAC 地址并去掉冒号
+                    string macAddress = string.Join("", netInterface.GetPhysicalAddress()
+                        .GetAddressBytes()
+                        .Select(b => b.ToString("X2")));
+
+                    // 获取网卡类型（有线或无线）
+                    string interfaceType = netInterface.NetworkInterfaceType switch
+                    {
+                        NetworkInterfaceType.Ethernet => "Ethernet",
+                        NetworkInterfaceType.Wireless80211 => "Wireless",
+                        _ => "Other"
+                    };
+
+                    return (ipv4Address.Address.ToString(), macAddress, interfaceType);
                 }
             }
 
-            // 如果没有找到有效的以太网 IP 地址，返回 "0.0.0.0"
-            return "0.0.0.0";
+            // 如果没有找到有效的 IP 地址和 MAC 地址，返回默认值
+            return ("0.0.0.0", "000000000000", "none");
         }
-
-
-
 
         private void SaveCredentials(string account, string password)
         {

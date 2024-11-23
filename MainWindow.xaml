@@ -6,38 +6,61 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="校园网登录"
- >
+>
     <Grid>
         <Grid.Background>
             <ImageBrush 
                 ImageSource="Assets/background.jpg" 
                 Stretch="None"
-                Opacity="0.6" />
-            <!-- 半透明效果 -->
+                Opacity="0.4" />
         </Grid.Background>
 
+        <!-- 主布局 -->
         <Grid Margin="20">
-            <StackPanel Spacing="10">
-            <TextBlock Text="账号：" />
-            <TextBox x:Name="AccountTextBox" PlaceholderText="请输入账号" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <!-- Logo 部分 -->
+                <RowDefinition Height="*" />
+                <!-- 其余内容 -->
+            </Grid.RowDefinitions>
 
-            <TextBlock Text="密码：" />
-            <PasswordBox x:Name="PasswordBox" PlaceholderText="请输入密码" />
-
-            <CheckBox x:Name="RememberMeCheckBox" Content="记住账号密码" IsChecked="True"/>
-            <Grid>
-                <!-- 显示 IP 地址的 TextBlock -->
-                <TextBlock x:Name="IpAddressTextBlock" 
-                   VerticalAlignment="Center" 
+            <!-- 顶部 Logo -->
+            <Image Source="Assets/logo.png" 
                    HorizontalAlignment="Center" 
-                   TextWrapping="Wrap"/>
-            </Grid>
-            <Button Content="登录" Click="LoginButton_Click" />
-            <Button Content="登出" Click="LogoutButton_Click" Margin="0,10,0,0" />
-            
+                   VerticalAlignment="Top" 
+                   Margin="0,10,0,20"
+                   Height="100" />
 
-            <TextBlock x:Name="StatusTextBlock" Text="状态显示" Foreground="Gray" TextWrapping="Wrap"/>
-        </StackPanel>
+            <!-- 主体内容 -->
+            <StackPanel Grid.Row="1" Spacing="10">
+                <TextBlock Text="账号：" />
+                <TextBox x:Name="AccountTextBox" PlaceholderText="请输入账号" />
+
+                <TextBlock Text="密码：" />
+                <PasswordBox x:Name="PasswordBox" PlaceholderText="请输入密码" />
+
+                <TextBlock Text="校区(无线登录需要)：" />
+                <ComboBox x:Name="campus" PlaceholderText="请选择校区" />
+                
+                <CheckBox x:Name="RememberMeCheckBox" Content="记住账号密码(此后自动登录)" IsChecked="True"/>
+
+                <Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                        <TextBlock x:Name="IpAddressTextBlock" 
+                       TextWrapping="Wrap"/>
+                        <TextBlock x:Name="InterfaceTypeTextBlock" 
+                           TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 登录与登出按钮并排 -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                    <Button Content="登录" Click="LoginButton_Click" Width="100" />
+                    <Button Content="登出" Click="LogoutButton_Click" Width="100" />
+                </StackPanel>
+
+                <TextBlock x:Name="StatusTextBlock" Text="状态显示" Foreground="Red" TextWrapping="Wrap"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
