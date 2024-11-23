@@ -4,7 +4,7 @@
 </p>
 <h2 align="center">AHU DWNET Client</h2>
 <h3 align="center">安徽大学(AHU)校园网登录应用</h3>
-使用Winui3构建
+<h3 align="center">使用Winui3构建</h3>
 <p align="center">
 <img src="https://img.shields.io/github/v/release/MoeclubM/AHU-DWNET-Client" alt="">
 <img src="https://img.shields.io/github/issues/MoeclubM/AHU-DWNET-Client?color=rgb%2877%20199%20166%29" alt="">
