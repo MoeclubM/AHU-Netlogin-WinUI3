@@ -1,6 +1,6 @@
 # AHU-DWNET-Client
 <p align="center">
-<img src="https://github.com/MoeclubM/AHU-DWNET-Client/raw/master/Assets/logo.png?raw=true" width="200" alt="ahu"/>
+<img src="https://github.com/MoeclubM/AHU-DWNET-Client/blob/main/Assets/logo.png?raw=true" width="200" alt="ahu"/>
 </p>
 <h2 align="center">AHU DWNET Client</h2>
 <h3 align="center">安徽大学(AHU)校园网登录应用</h3>
