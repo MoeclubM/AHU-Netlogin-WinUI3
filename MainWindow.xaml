@@ -7,7 +7,7 @@
     mc:Ignorable="d"
     Title="校园网登录"
 >
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.Background>
             <ImageBrush 
                 ImageSource="Assets/background.jpg" 
@@ -34,19 +34,19 @@
             <!-- 主体内容 -->
             <StackPanel Grid.Row="1" Spacing="10">
                 <TextBlock Text="账号：" />
-                <TextBox x:Name="AccountTextBox" PlaceholderText="请输入账号" />
+                <TextBox x:Name="AccountTextBox" PlaceholderText="请输入账号" TabIndex="0"/>
 
                 <TextBlock Text="密码：" />
-                <PasswordBox x:Name="PasswordBox" PlaceholderText="请输入密码" />
+                <PasswordBox x:Name="PasswordBox" PlaceholderText="请输入密码" TabIndex="1" KeyDown="PasswordBox_KeyDown"/>
 
                 <TextBlock Text="校区(无线登录需要填)：" />
-                <ComboBox x:Name="campus" PlaceholderText="请选择校区" SelectedIndex="0">
+                <ComboBox x:Name="campus" PlaceholderText="请选择校区" TabIndex="2" SelectedIndex="0">
                     <ComboBoxItem Content="龙河校区" Tag="AHULHAC" />
                     <ComboBoxItem Content="磬苑校区(未测试)" Tag="AHUQYAC" />
                     <ComboBoxItem Content="蜀山校区(未测试)" Tag="AHUSSAC" />
                 </ComboBox>
 
-                <CheckBox x:Name="RememberMeCheckBox" Content="记住账号密码(此后自动登录)" IsChecked="True"/>
+                <CheckBox x:Name="RememberMeCheckBox" Content="记住信息(此后自动登录)" TabIndex="3" IsChecked="True"/>
 
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
@@ -59,8 +59,8 @@
 
                 <!-- 登录登出按钮 -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-                    <Button Content="登录" Click="LoginButton_Click" Width="100" />
-                    <Button Content="登出" Click="LogoutButton_Click" Width="100" />
+                    <Button Content="登录" Click="LoginButton_Click" Width="100" TabIndex="4"/>
+                    <Button Content="登出" Click="LogoutButton_Click" Width="100" TabIndex="5"/>
                 </StackPanel>
 
                 <TextBlock x:Name="StatusTextBlock" Text="" Foreground="Red" TextWrapping="Wrap"/>

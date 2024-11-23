@@ -10,6 +10,7 @@ using Microsoft.UI.Windowing;
 
 namespace DrcomLoginApp
 {
+
     public sealed partial class MainWindow : Window
     {
         private readonly string loginUrlTemplate = "http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1&user_account={0}&user_password={1}&wlan_user_ip={2}&wlan_user_ipv6=&wlan_user_mac={3}&wlan_ac_ip=172.16.253.1&wlan_ac_name={4}&jsVersion=3.3.2&v=4946";
@@ -34,7 +35,19 @@ namespace DrcomLoginApp
             //显示网卡地址类型
             IpAddressTextBlock.Text = $"IP 地址: {GetNetworkDetails().IpAddress}";
             InterfaceTypeTextBlock.Text = $"网卡类型: {GetNetworkDetails().InterfaceType}";
-
+            // 加载校区信息
+            string savedCampus = LoadCampus();
+            if (!string.IsNullOrEmpty(savedCampus))
+            {
+                foreach (ComboBoxItem item in campus.Items)
+                {
+                    if (item.Tag as string == savedCampus)
+                    {
+                        campus.SelectedItem = item;
+                        break;
+                    }
+                }
+            }
         }
         private AppWindow GetAppWindowForCurrentWindow()
         {
@@ -42,6 +55,17 @@ namespace DrcomLoginApp
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(windowId);
         }
+
+        private void PasswordBox_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            // 检查按下的是否是 Enter 键
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                // 调用登录方法
+                login();
+            }
+        }
+
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             login();
@@ -87,11 +111,17 @@ namespace DrcomLoginApp
                     StatusTextBlock.Text = "登录成功！";
                     if (RememberMeCheckBox.IsChecked == true)
                     {
+                        SaveCampus(acName);
                         SaveCredentials(account, password);
                     }
                 }
                 else if (response.Contains("\"ret_code\":2"))
                 {
+                    if (RememberMeCheckBox.IsChecked == true)
+                    {
+                        SaveCampus(acName);
+                        SaveCredentials(account, password);
+                    }
                     StatusTextBlock.Text = "当前设备已在线！无需重复登录";
                 }
                 else
@@ -99,10 +129,20 @@ namespace DrcomLoginApp
                     // 解析错误内容
                     string errorMessage = response;
                     StatusTextBlock.Text = $"登录失败！请求地址：{url} 错误信息: {errorMessage}";
+                    if (RememberMeCheckBox.IsChecked == true)
+                    {
+                        SaveCampus(acName);
+                        SaveCredentials(account, password);
+                    }
                 }
             }
             catch (Exception ex)
             {
+                if (RememberMeCheckBox.IsChecked == true)
+                {
+                    SaveCampus(acName);
+                    SaveCredentials(account, password);
+                }
                 StatusTextBlock.Text = $"请求失败: {ex.Message}";
             }
         }
@@ -206,5 +246,24 @@ namespace DrcomLoginApp
             }
             return false;
         }
+
+        private void SaveCampus(string campusTag)
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["Campus"] = campusTag;
+        }
+
+        private string LoadCampus()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+
+            if (localSettings.Values.TryGetValue("Campus", out object campusObj))
+            {
+                return campusObj as string ?? "";
+            }
+            return "";
+        }
+
+
     }
 }
