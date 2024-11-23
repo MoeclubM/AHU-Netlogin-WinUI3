@@ -63,7 +63,6 @@
                     <Button Content="登出" Click="LogoutButton_Click" Width="100" TabIndex="5"/>
                 </StackPanel>
 
-                <TextBlock x:Name="StatusTextBlock" Text="" Foreground="Red" TextWrapping="Wrap"/>
             </StackPanel>
         </Grid>
     </Grid>

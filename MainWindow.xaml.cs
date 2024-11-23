@@ -7,31 +7,36 @@ using System.Net.NetworkInformation;
 using Windows.Graphics;
 using Windows.Storage;
 using Microsoft.UI.Windowing;
+using System.IO;
+using WinUIWindow = Microsoft.UI.Xaml.Window;
+using System.Threading.Tasks;
 
 namespace DrcomLoginApp
 {
-
-    public sealed partial class MainWindow : Window
+    public sealed partial class MainWindow : WinUIWindow
     {
+        private AppWindow appWindow;
+        private OverlappedPresenter presenter;
+
         private readonly string loginUrlTemplate = "http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1&user_account={0}&user_password={1}&wlan_user_ip={2}&wlan_user_ipv6=&wlan_user_mac={3}&wlan_ac_ip=172.16.253.1&wlan_ac_name={4}&jsVersion=3.3.2&v=4946";
         private readonly string logoutUrlTemplate = "http://172.16.253.3:801/eportal/?c=Portal&a=logout&callback=dr1004&login_method=1&user_account=drcom&user_password=123&ac_logout=0&register_mode=1&wlan_user_ip={0}&wlan_user_ipv6=&wlan_vlan_id=0&wlan_user_mac=000000000000&wlan_ac_ip=172.16.253.1&wlan_ac_name=&jsVersion=3.3.2&v=3484";
 
         public MainWindow()
         {
+
+
             this.InitializeComponent();
-            if(LoadSavedCredentials())
-            {
-                login();
-            }
             // 获取 AppWindow 对象
-            var appWindow = GetAppWindowForCurrentWindow();
+            appWindow = GetAppWindowForCurrentWindow();
+            presenter = appWindow.Presenter as OverlappedPresenter;
             // 自定义标题栏
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(null); // 隐藏默认的标题栏
-            // 设置窗口的宽度和高度
-            appWindow.Resize(new SizeInt32(360, 550));
+                               // 设置窗口的宽度和高度
+            appWindow.Resize(new SizeInt32(360, 500));
             //设置icon
-            appWindow.SetIcon("Assets/logo.ico");
+            string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo.ico");
+            appWindow.SetIcon(iconPath);
             //显示网卡地址类型
             IpAddressTextBlock.Text = $"IP 地址: {GetNetworkDetails().IpAddress}";
             InterfaceTypeTextBlock.Text = $"网卡类型: {GetNetworkDetails().InterfaceType}";
@@ -47,6 +52,10 @@ namespace DrcomLoginApp
                         break;
                     }
                 }
+            }
+            if (LoadSavedCredentials())
+            {
+                login();
             }
         }
         private AppWindow GetAppWindowForCurrentWindow()
@@ -65,11 +74,31 @@ namespace DrcomLoginApp
                 login();
             }
         }
+        private async Task ShowMessageDialog(string message)
+        {
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "通知",
+                Content = message,
+                CloseButtonText = "确定"
+            };
 
+            if (this.Content.XamlRoot != null)
+            {
+                dialog.XamlRoot = this.Content.XamlRoot; // 确保对话框在当前窗口中显示
+                await dialog.ShowAsync();
+            }
+            else
+            {
+                // Handle the case where XamlRoot is null
+                // For example, show a fallback message or log an error
+            }
+        }
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             login();
         }
+
         private async void login()
         {
             string account = AccountTextBox.Text.Trim();
@@ -81,7 +110,7 @@ namespace DrcomLoginApp
             string acName = (campus.SelectedItem as ComboBoxItem)?.Tag as string ?? "";
             if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(password))
             {
-                StatusTextBlock.Text = "请输入账号和密码！";
+                await ShowMessageDialog("请输入账号和密码！");
                 return;
             }
             if (InterfaceType != "none")
@@ -97,8 +126,7 @@ namespace DrcomLoginApp
             }
             else
             {
-                StatusTextBlock.Text = "未正确识别您的网络设备，请尝试重新启动本应用";
-                return;
+                await ShowMessageDialog("未正确识别您的网络设备，请尝试重新启动本应用");
             }
 
             try
@@ -108,7 +136,7 @@ namespace DrcomLoginApp
 
                 if (response.Contains("\"result\":\"1\""))
                 {
-                    StatusTextBlock.Text = "登录成功！";
+                    await ShowMessageDialog("登录成功！");
                     if (RememberMeCheckBox.IsChecked == true)
                     {
                         SaveCampus(acName);
@@ -122,13 +150,13 @@ namespace DrcomLoginApp
                         SaveCampus(acName);
                         SaveCredentials(account, password);
                     }
-                    StatusTextBlock.Text = "当前设备已在线！无需重复登录";
+                    await ShowMessageDialog("当前设备已在线！无需重复登录");
                 }
                 else
                 {
                     // 解析错误内容
                     string errorMessage = response;
-                    StatusTextBlock.Text = $"登录失败！请求地址：{url} 错误信息: {errorMessage}";
+                    await ShowMessageDialog($"登录失败！请求地址：{url} 错误信息: {errorMessage}");
                     if (RememberMeCheckBox.IsChecked == true)
                     {
                         SaveCampus(acName);
@@ -143,9 +171,10 @@ namespace DrcomLoginApp
                     SaveCampus(acName);
                     SaveCredentials(account, password);
                 }
-                StatusTextBlock.Text = $"请求失败: {ex.Message}";
+                await ShowMessageDialog($"请求失败: {ex.Message}");
             }
         }
+
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             string ip = GetNetworkDetails().IpAddress;
@@ -173,20 +202,21 @@ namespace DrcomLoginApp
                 if (result == "1")
                 {
                     // 登出成功
-                    StatusTextBlock.Text = "登出成功！";
+                    await ShowMessageDialog("登出成功！");
                 }
                 else
                 {
                     // 登出失败，显示具体错误信息
-                    StatusTextBlock.Text = $"登出失败！错误信息: {message}";
+                    await ShowMessageDialog($"登出失败！错误信息: {message}");
                 }
             }
             catch (Exception ex)
             {
                 // 捕获并处理异常
-                StatusTextBlock.Text = $"请求失败！错误信息: {ex.Message}";
+                await ShowMessageDialog($"请求失败！错误信息: {ex.Message}");
             }
         }
+
         private (string IpAddress, string MacAddress, string InterfaceType) GetNetworkDetails()
         {
             var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces()
@@ -263,7 +293,6 @@ namespace DrcomLoginApp
             }
             return "";
         }
-
-
     }
 }
+
