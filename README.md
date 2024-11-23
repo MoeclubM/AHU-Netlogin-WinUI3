@@ -1,9 +1,10 @@
 # AHU-DWNET-Client
 <p align="center">
-<img src="https://github.com/MoeclubM/AHU-DWNET-Client/raw/master/readmeassets/logo.png?raw=true" width="200" alt="ahu"/>
+<img src="https://github.com/MoeclubM/AHU-DWNET-Client/raw/master/readmeassets/assets.png?raw=true" width="200" alt="ahu"/>
 </p>
+<h2 align="center">AHU DWNET Clien</h2>
 <h3 align="center">安徽大学(AHU)校园网登录应用</h3>
-使用winui3
+使用Winui3构建
 <p align="center">
 <img src="https://img.shields.io/github/v/release/MoeclubM/AHU-DWNET-Client" alt="">
 <img src="https://img.shields.io/github/issues/MoeclubM/AHU-DWNET-Client?color=rgb%2877%20199%20166%29" alt="">
