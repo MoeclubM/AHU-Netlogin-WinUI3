@@ -57,13 +57,13 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- 登录与登出按钮并排 -->
+                <!-- 登录登出按钮 -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
                     <Button Content="登录" Click="LoginButton_Click" Width="100" />
                     <Button Content="登出" Click="LogoutButton_Click" Width="100" />
                 </StackPanel>
 
-                <TextBlock x:Name="StatusTextBlock" Text="状态显示" Foreground="Red" TextWrapping="Wrap"/>
+                <TextBlock x:Name="StatusTextBlock" Text="" Foreground="Red" TextWrapping="Wrap"/>
             </StackPanel>
         </Grid>
     </Grid>

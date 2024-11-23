@@ -29,6 +29,8 @@ namespace DrcomLoginApp
             SetTitleBar(null); // 隐藏默认的标题栏
             // 设置窗口的宽度和高度
             appWindow.Resize(new SizeInt32(360, 550));
+            //设置icon
+            appWindow.SetIcon("Assets/logo.ico");
             //显示网卡地址类型
             IpAddressTextBlock.Text = $"IP 地址: {GetNetworkDetails().IpAddress}";
             InterfaceTypeTextBlock.Text = $"网卡类型: {GetNetworkDetails().InterfaceType}";
