@@ -24,10 +24,11 @@ namespace DrcomLoginApp
             }
             // 获取 AppWindow 对象
             var appWindow = GetAppWindowForCurrentWindow();
-            //隐藏icon
-            appWindow.SetIcon(null);
+            // 自定义标题栏
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(null); // 隐藏默认的标题栏
             // 设置窗口的宽度和高度
-            appWindow.Resize(new SizeInt32(350, 520));
+            appWindow.Resize(new SizeInt32(360, 550));
             //显示网卡地址类型
             IpAddressTextBlock.Text = $"IP 地址: {GetNetworkDetails().IpAddress}";
             InterfaceTypeTextBlock.Text = $"网卡类型: {GetNetworkDetails().InterfaceType}";
@@ -51,6 +52,7 @@ namespace DrcomLoginApp
             string mac = GetNetworkDetails().MacAddress;
             string InterfaceType = GetNetworkDetails().InterfaceType;
             string url = "";
+            string acName = (campus.SelectedItem as ComboBoxItem)?.Tag as string ?? "";
             if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(password))
             {
                 StatusTextBlock.Text = "请输入账号和密码！";
@@ -64,7 +66,7 @@ namespace DrcomLoginApp
                 }
                 if (InterfaceType == "Wireless")
                 {
-                    url = string.Format(loginUrlTemplate, Uri.EscapeDataString(account), Uri.EscapeDataString(password), ip, mac, "AHULHAC");
+                    url = string.Format(loginUrlTemplate, Uri.EscapeDataString(account), Uri.EscapeDataString(password), ip, mac, acName);
                 }
             }
             else
