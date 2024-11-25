@@ -1,15 +1,15 @@
-# AHU-DWNET-Client
+# AHU-Netlogin-WinUI3
 <p align="center">
-<img src="https://github.com/MoeclubM/AHU-DWNET-Client/blob/main/Assets/logo.png?raw=true" width="200" alt="ahu"/>
+<img src="https://github.com/MoeclubM/AHU-Netlogin-WinUI3/blob/main/Assets/logo.png?raw=true" width="200" alt="ahu"/>
 </p>
 <h2 align="center">AHU DWNET Client</h2>
 <h3 align="center">安徽大学(AHU)校园网(drcom认证)登录应用</h3>
 <h3 align="center">使用WinUI3构建</h3>
 <p align="center">
-<img src="https://img.shields.io/github/v/release/MoeclubM/AHU-DWNET-Client" alt="">
-<img src="https://img.shields.io/github/issues/MoeclubM/AHU-DWNET-Client?color=rgb%2877%20199%20166%29" alt="">
-<img src="https://img.shields.io/github/downloads/MoeclubM/AHU-DWNET-Client/total?color=ea8f14&label=users" alt="">
-<img src="https://img.shields.io/github/license/MoeclubM/AHU-DWNET-Client" alt="">
+<img src="https://img.shields.io/github/v/release/MoeclubM/AHU-Netlogin-WinUI3" alt="">
+<img src="https://img.shields.io/github/issues/MoeclubM/AHU-Netlogin-WinUI3?color=rgb%2877%20199%20166%29" alt="">
+<img src="https://img.shields.io/github/downloads/MoeclubM/AHU-Netlogin-WinUI3/total?color=ea8f14&label=users" alt="">
+<img src="https://img.shields.io/github/license/MoeclubM/AHU-Netlogin-WinUI3" alt="">
 </p>
 
 
